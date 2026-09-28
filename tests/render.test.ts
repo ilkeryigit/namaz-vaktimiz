@@ -2,11 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { analogSvg, formatClock, formatHijri, meridiem } from '../src/clock'
 import { remainingText, timesHtml } from '../src/render'
 import { defaultSettings } from '../src/settings'
-import { computeTimes } from '../src/prayer'
+import { computeTimes, formatInTz, zonedDateKey } from '../src/prayer'
 import { resolvePlace, searchTurkey, findProvince } from '../src/location'
 import { canVerifyOnline, maxDiffMinutes, zonedToUtc } from '../src/remote'
 
-const USAK = { lat: 38.5, lon: 29.4167 }
+const TZ = 'Europe/Istanbul'
+const USAK = { lat: 38.5, lon: 29.4167, tz: TZ }
 const when = new Date('2026-09-28T12:00:00')
 
 describe('varsayılan konum', () => {
@@ -73,24 +74,24 @@ describe('vakit listesi render', () => {
   const t = computeTimes(s, USAK, when)
 
   it('her vakit satırı üretir', () => {
-    const html = timesHtml(s, t, when)
+    const html = timesHtml(s, t, when, TZ)
     for (const label of ['İmsak', 'Sabah', 'Güneş Doğumu', 'Öğle', 'İkindi', 'Akşam', 'Yatsı']) {
       expect(html).toContain(label)
     }
   })
 
   it('saatlar SS:DD biçiminde', () => {
-    const html = timesHtml(s, t, when)
+    const html = timesHtml(s, t, when, TZ)
     expect(html).toMatch(/class="val">\d{2}:\d{2}</)
   })
 
   it('anlık vakit "now" sınıfını alır', () => {
-    const html = timesHtml(s, t, new Date(t.dhuhr.getTime() + 60_000))
+    const html = timesHtml(s, t, new Date(t.dhuhr.getTime() + 60_000), TZ)
     expect(html).toMatch(/class="row now"[^]*?Öğle/)
   })
 
   it('imsak gizliyse satır sayısı 6', () => {
-    const html = timesHtml({ ...s, showImsak: false }, t, when)
+    const html = timesHtml({ ...s, showImsak: false }, t, when, TZ)
     expect(html.match(/class="row/g) ?? []).toHaveLength(6)
   })
 })
@@ -124,5 +125,47 @@ describe('uzak doğrulama yardımcıları', () => {
     const a = computeTimes(defaultSettings(), USAK, when)
     const b = { ...a, isha: new Date(a.isha.getTime() + 4 * 60_000) }
     expect(maxDiffMinutes(a, b)).toBe(4)
+  })
+})
+
+describe('dünya modu: saat dilimi', () => {
+  // New York, 28.09.2026'da İstanbul'dan 7 saat geride.
+  const NYC = { lat: 40.7128, lon: -74.006, tz: 'America/New_York' }
+
+  it('vakitleri konumun saat diliminde basar, sistem saatinde değil', () => {
+    const s = defaultSettings()
+    const t = computeTimes(s, NYC, when)
+    const html = timesHtml(s, t, when, NYC.tz)
+    // 28.09 New York: Güneş Doğumu 06:43, Gün Batımı 18:50 -> Öğle 12:52 (EDT)
+    expect(html).toMatch(/class="val">06:43</)
+    expect(html).toMatch(/class="val">18:50</)
+    expect(html).toMatch(/class="val">12:52</)
+    // Aynı anlar İstanbul saatinde 13:43 / 01:50 / 19:52 olurdu.
+    expect(html).not.toMatch(/class="val">13:43</)
+    expect(html).not.toMatch(/class="val">19:52</)
+  })
+
+  it('hesaplanan gün konumun takvim günüdür', () => {
+    // 29.09 02:00 TRT -> New York'da hâlâ 28.09
+    const gece = new Date('2026-09-29T02:00:00')
+    expect(zonedDateKey(gece, 'Europe/Istanbul')).toBe('2026-09-29')
+    expect(zonedDateKey(gece, 'America/New_York')).toBe('2026-09-28')
+    expect(computeTimes(defaultSettings(), NYC, gece).dateKey).toBe('2026-09-28')
+  })
+
+  it('aynı uzak gün, iki farklı andan aynı vakitleri verir', () => {
+    // 28.09 12:00 TRT ve 29.09 02:00 TRT -> New York'da ikisi de 28.09
+    const a = computeTimes(defaultSettings(), NYC, new Date('2026-09-28T12:00:00'))
+    const b = computeTimes(defaultSettings(), NYC, new Date('2026-09-29T02:00:00'))
+    expect(b.dateKey).toBe(a.dateKey)
+    for (const k of ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const) {
+      expect(b[k].getTime()).toBe(a[k].getTime())
+    }
+  })
+
+  it('saati hedef dilimde biçimlendirir', () => {
+    const instant = new Date('2026-09-28T09:05:00Z')
+    expect(formatInTz(instant, 'Europe/Istanbul')).toBe('12:05')
+    expect(formatInTz(instant, 'America/New_York')).toBe('05:05')
   })
 })

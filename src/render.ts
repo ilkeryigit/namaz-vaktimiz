@@ -1,5 +1,5 @@
 import type { DayTimes, ResolvedPlace, Settings } from './types'
-import { computeTimes, currentAndNext, localDateKey, orderedTimes } from './prayer'
+import { computeTimes, currentAndNext, formatInTz, localDateKey, orderedTimes } from './prayer'
 
 /** Bir günün vakitlerini verilen saat diliminde hesaplar. */
 export function timesForDay(s: Settings, place: ResolvedPlace, date: Date): DayTimes {
@@ -11,10 +11,8 @@ export function needsRecompute(lastKey: string, now: Date): boolean {
   return localDateKey(now) !== lastKey
 }
 
-const pad = (n: number) => String(n).padStart(2, '0')
-
-/** Vakit listesini HTML olarak basar. */
-export function timesHtml(s: Settings, t: DayTimes, now: Date): string {
+/** Vakit listesini HTML olarak basar. Saatler konumun saat dilimindedir. */
+export function timesHtml(s: Settings, t: DayTimes, now: Date, tz: string): string {
   const { current } = currentAndNext(t, s.showImsak, now)
   return orderedTimes(s, t)
     .map((r) => {
@@ -22,7 +20,7 @@ export function timesHtml(s: Settings, t: DayTimes, now: Date): string {
       return `<div class="row${on ? ' now' : ''}">
         <span class="lbl">${r.label}</span>
         <span class="dots"></span>
-        <span class="val">${pad(r.at.getHours())}:${pad(r.at.getMinutes())}</span>
+        <span class="val">${formatInTz(r.at, tz)}</span>
       </div>`
     })
     .join('')

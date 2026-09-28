@@ -29,13 +29,14 @@ export function tickOnce(s: Settings, now = new Date()): void {
   }
 
   const t = times
+  const p = resolvePlace(s)
   const { currentLabel, next, nextLabel } = currentAndNext(t, s.showImsak, now)
   const nextAt = orderedTimes(s, t).find((r) => r.key === next)?.at ?? null
 
   el('date').textContent = `${formatHijri(now)} · ${formatGregorian(now)}`
-  el('place').textContent = resolvePlace(s).label
+  el('place').textContent = p.label
   el('clock').innerHTML = clockHtml(now, s)
-  el('times').innerHTML = timesHtml(s, t, now)
+  el('times').innerHTML = timesHtml(s, t, now, p.tz)
   el('now').textContent = currentLabel
   el('next').innerHTML = `${nextLabel}<b>${nextAt ? remainingText(nextAt, now) : '—'}</b>`
 }

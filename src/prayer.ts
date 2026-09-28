@@ -41,13 +41,14 @@ export function makeParams(s: Settings, lat: number, lon: number): CalculationPa
 }
 
 /**
- * Bir günün vakitlerini hesaplar. `date` gün içindeki an değil, günün
- * kendisidir — adhan tarihe göre gün sınırını kullanır.
+ * Bir günün vakitlerini hesaplar. `date` gün içindeki an olabilir; gün
+ * sınırı `place.tz` saat dilimine göre `zonedNoon` ile belirlenir.
  */
-export function computeTimes(s: Settings, place: { lat: number; lon: number }, date: Date): DayTimes {
-  const t = new PrayerTimes(new Coordinates(place.lat, place.lon), date, makeParams(s, place.lat, place.lon))
+export function computeTimes(s: Settings, place: { lat: number; lon: number; tz?: string }, date: Date): DayTimes {
+  const tz = place.tz ?? Intl.DateTimeFormat().resolvedOptions().timeZone
+  const t = new PrayerTimes(new Coordinates(place.lat, place.lon), zonedNoon(date, tz), makeParams(s, place.lat, place.lon))
   return {
-    dateKey: localDateKey(date),
+    dateKey: zonedDateKey(date, tz),
     imsak: addMinutes(t.fajr, -s.imsakMinutes),
     fajr: t.fajr,
     sunrise: t.sunrise,
@@ -102,5 +103,39 @@ export function currentAndNext(t: DayTimes, showImsak: boolean, now: Date) {
 export function localDateKey(d: Date): string {
   const p = (n: number) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
+}
+
+const tzCache = new Map<string, Intl.DateTimeFormat>()
+
+function tzFmt(tz: string, opts: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+  const key = `${tz}|${JSON.stringify(opts)}`
+  let f = tzCache.get(key)
+  if (!f) {
+    f = new Intl.DateTimeFormat('en-GB', { timeZone: tz, hourCycle: 'h23', ...opts })
+    tzCache.set(key, f)
+  }
+  return f
+}
+
+/** Verilen saat dilimindeki takvim gününü YYYY-MM-DD yapar. */
+export function zonedDateKey(d: Date, tz: string): string {
+  const q = Object.fromEntries(
+    tzFmt(tz, { year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d).map((p) => [p.type, p.value])
+  )
+  return `${q.year}-${q.month}-${q.day}`
+}
+
+/**
+ * adhan tarihi YEREL Y/M/D olarak okur. Saat dilimi başka olan bir konum
+ * seçilirse o günü öğlen yarısıyla temsil ederek gün sınırını kaydırıyoruz.
+ */
+export function zonedNoon(d: Date, tz: string): Date {
+  const [y, m, day] = zonedDateKey(d, tz).split('-').map(Number)
+  return new Date(y!, m! - 1, day!, 12, 0, 0, 0)
+}
+
+/** Saati hedef saat diliminde "SS:DD" olarak basar. */
+export function formatInTz(d: Date, tz: string): string {
+  return tzFmt(tz, { hour: '2-digit', minute: '2-digit' }).format(d)
 }
 
