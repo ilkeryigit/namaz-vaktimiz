@@ -11,9 +11,11 @@ export const THEME_CSS = `
 :root {
   --r: 14px;
   --gap: 8px;
+  /* Opaklık yalnız panele uygulanır; yazılar solmaz. */
+  --bg: color-mix(in srgb, var(--bgc) calc(var(--opacity, 0.95) * 100%), transparent);
 }
 [data-theme='glass'] {
-  --bg: rgba(24, 30, 44, 0.72);
+  --bgc: #181e2c;
   --fg: #f2f5fa;
   --dim: rgba(242, 245, 250, 0.62);
   --line: rgba(255, 255, 255, 0.10);
@@ -24,7 +26,7 @@ export const THEME_CSS = `
   --shadow: 0 10px 30px rgba(0,0,0,.35);
 }
 [data-theme='night'] {
-  --bg: rgba(8, 10, 16, 0.90);
+  --bgc: #080a10;
   --fg: #e8ecf5;
   --dim: rgba(232, 236, 245, 0.55);
   --line: rgba(120, 160, 255, 0.16);
@@ -35,7 +37,7 @@ export const THEME_CSS = `
   --shadow: 0 0 0 1px rgba(0,0,0,.4);
 }
 [data-theme='neutral'] {
-  --bg: rgba(246, 245, 242, 0.94);
+  --bgc: #f6f5f2;
   --fg: #23262b;
   --dim: rgba(35, 38, 43, 0.58);
   --line: rgba(0, 0, 0, 0.10);

@@ -35,10 +35,9 @@ pub fn run() {
         ))
         .setup(|app| {
             let settings = MenuItem::with_id(app, "settings", "Ayarlar…", true, None::<&str>)?;
-            let on_top = MenuItem::with_id(app, "on_top", "Her zaman üstte", true, None::<&str>)?;
             let sep = PredefinedMenuItem::separator(app)?;
             let quit_i = MenuItem::with_id(app, "quit", "Çıkış", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&settings, &on_top, &sep, &quit_i])?;
+            let menu = Menu::with_items(app, &[&settings, &sep, &quit_i])?;
 
             TrayIconBuilder::with_id("main")
                 .icon(app.default_window_icon().unwrap().clone())
@@ -47,12 +46,6 @@ pub fn run() {
                 .show_menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "settings" => show_settings(app),
-                    "on_top" => {
-                        if let Some(w) = app.get_webview_window("main") {
-                            let now_top = w.is_always_on_top().unwrap_or(false);
-                            let _ = w.set_always_on_top(!now_top);
-                        }
-                    }
                     "quit" => quit(app),
                     _ => {}
                 })

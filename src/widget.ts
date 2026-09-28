@@ -2,7 +2,7 @@ import { clockHtml, formatGregorian, formatHijri } from './clock'
 import { computeTimes, currentAndNext, localDateKey, orderedTimes } from './prayer'
 import { resolvePlace } from './location'
 import { remainingText, timesHtml } from './render'
-import { loadSettings, SETTINGS_CHANGED } from './store'
+import { loadPosition, loadSettings, onResetPosition, onSettingsChanged, savePosition } from './store'
 import { applyTheme } from './themes'
 import type { DayTimes, Settings } from './types'
 
@@ -49,25 +49,66 @@ export async function start(): Promise<void> {
     if (settings) tickOnce(settings)
   }, 1000)
 
-  window.addEventListener(SETTINGS_CHANGED, (e) => {
-    settings = (e as CustomEvent<Settings>).detail
+  await onSettingsChanged((next) => {
+    settings = next
     tickOnce(settings)
+    void syncWindow(next)
   })
+  await onResetPosition(() => void centerWindow())
 
   await applyPlatform(settings)
 }
 
-async function applyPlatform(s: Settings): Promise<void> {
+/** Ayar değişimi pencere durumunu da etkiler (örn. "her zaman üstte"). */
+async function syncWindow(s: Settings): Promise<void> {
   try {
     const { getCurrentWindow } = await import('@tauri-apps/api/window')
+    await getCurrentWindow().setAlwaysOnTop(s.alwaysOnTop)
+  } catch {
+    /* tarayıcıda çalışıyorsa pencere API'si yok */
+  }
+}
+
+async function centerWindow(): Promise<void> {
+  try {
+    const { getCurrentWindow } = await import('@tauri-apps/api/window')
+    await getCurrentWindow().center()
+  } catch (e) {
+    console.warn('pencere ortalanamadı', e)
+  }
+}
+
+/** Kayıtlı konum ekranda değilse (monitör sökülmüş) ortalamaya düşer. */
+async function applyPlatform(s: Settings): Promise<void> {
+  try {
+    const { getCurrentWindow, PhysicalPosition, availableMonitors } = await import('@tauri-apps/api/window')
     const w = getCurrentWindow()
     await w.setAlwaysOnTop(s.alwaysOnTop)
+
+    const pos = await loadPosition()
+    if (pos) {
+      const visible = (await availableMonitors()).some((m) => {
+        const p = m.position
+        const sz = m.size
+        return pos.x >= p.x - 40 && pos.y >= p.y - 40 && pos.x <= p.x + sz.width - 40 && pos.y <= p.y + sz.height - 40
+      })
+      // Ekran dışıysa (monitör sökülmüş) ortalamaya düş.
+      if (visible) await w.setPosition(new PhysicalPosition(pos.x, pos.y))
+    }
+
+    // Sürükleme bitince yaz; her onMoved olayında değil.
+    let saveTimer: number | undefined
+    await w.onMoved(({ payload }) => {
+      window.clearTimeout(saveTimer)
+      saveTimer = window.setTimeout(() => void savePosition({ x: payload.x, y: payload.y }), 400)
+    })
 
     document.getElementById('drag')?.addEventListener('mousedown', (e) => {
       if ((e.target as HTMLElement).closest('button, a, .no-drag')) return
       void w.startDragging()
     })
-  } catch {
-    /* tarayıcıda çalışıyorsa pencere API'si yok — sürükleme devre dışı */
+  } catch (e) {
+    // Tarayıcıda pencere API'si yok (sürükleme devre dışı) ya da yetki eksik.
+    console.warn('pencere entegrasyonu kurulamadı', e)
   }
 }

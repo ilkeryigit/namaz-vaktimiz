@@ -2,7 +2,7 @@
 import { PROVINCES, findProvince, resolvePlace } from './location'
 import { computeTimes, localDateKey } from './prayer'
 import { applyRemote, canVerifyOnline, fetchAladhan, maxDiffMinutes } from './remote'
-import { loadSettings, saveSettings } from './store'
+import { broadcastResetPosition, broadcastSettings, clearPosition, loadSettings, saveSettings } from './store'
 import { applyTheme, THEME_CSS } from './themes'
 import { METHODS, PRAYER_LABELS, THEMES, type PrayerKey, type Settings } from './types'
 
@@ -52,13 +52,7 @@ async function commit(): Promise<void> {
   await saveSettings(s)
   $('save-state').textContent = 'Kaydedildi'
   window.setTimeout(() => ($('save-state').textContent = ''), 1400)
-  // Widget ayrı pencerede olduğu için olayı elle yayınlıyoruz.
-  try {
-    const { emit } = await import('@tauri-apps/api/event')
-    await emit('nv:settings-changed', s)
-  } catch {
-    window.dispatchEvent(new CustomEvent('nv:settings-changed', { detail: s }))
-  }
+  await broadcastSettings(s)
 }
 
 function fillProvinces(): void {
@@ -271,12 +265,9 @@ function bind(): void {
   $('worldq').addEventListener('input', debounce(() => void worldSearch(), 450))
   $('verify').addEventListener('click', () => void verify())
   $('reset-pos').addEventListener('click', async () => {
-    try {
-      const { getCurrentWindow } = await import('@tauri-apps/api/window')
-      await getCurrentWindow().center()
-    } catch {
-      /* tarayıcıda çalışıyorsa yok */
-    }
+    await clearPosition()
+    // Pencereyi kendisi ortalar: ayarlar penceresi widget'ı bulmaya çalışmaz.
+    await broadcastResetPosition()
   })
   $('autostart').addEventListener('change', async (e) => {
     const want = (e.target as HTMLInputElement).checked
