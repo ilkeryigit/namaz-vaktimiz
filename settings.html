@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="tr" data-theme="neutral">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Namaz Vaktimiz — Ayarlar</title>
+  </head>
+  <body class="settings-body">
+    <div class="wrap">
+      <header class="s-head">
+        <h1>Namaz Vaktimiz</h1>
+        <p class="dim">Türkiye'nin 81 il, 973 ilçesi için çevrimdışı vakit hesaplama.</p>
+      </header>
+
+      <nav class="tabs" id="tabs">
+        <button class="tab on" data-tab="location">Konum</button>
+        <button class="tab" data-tab="calc">Hesaplama</button>
+        <button class="tab" data-tab="look">Görünüm</button>
+        <button class="tab" data-tab="system">Sistem</button>
+      </nav>
+
+      <!-- Konum -->
+      <section class="page on" data-page="location">
+        <div class="row2">
+          <label>Ülke</label>
+          <div class="seg" id="country">
+            <button class="on" data-v="TR">Türkiye</button>
+            <button data-v="WLD">Dünya</button>
+          </div>
+        </div>
+
+        <div id="tr-part">
+          <div class="row2">
+            <label for="province">İl</label>
+            <select id="province"></select>
+          </div>
+          <div class="row2">
+            <label for="district">İlçe</label>
+            <select id="district"></select>
+          </div>
+          <p class="hint" id="coord-hint"></p>
+        </div>
+
+        <div id="wld-part" hidden>
+          <div class="row2">
+            <label for="worldq">Yer ara</label>
+            <input id="worldq" type="search" placeholder="Örn. Köln, Casablanca, Auckland" />
+          </div>
+          <div id="world-results" class="results"></div>
+          <div class="row2">
+            <label>Seçili konum</label>
+            <div id="world-picked" class="hint">—</div>
+          </div>
+          <p class="hint">Konumlar Open-Meteo coğrafi kodlama servisi ile aranır. Sadece aradığınız metin gönderilir.</p>
+        </div>
+      </section>
+
+      <!-- Hesaplama -->
+      <section class="page" data-page="calc">
+        <div class="row2">
+          <label for="method">Hesaplama yöntemi</label>
+          <select id="method"></select>
+        </div>
+        <p class="hint" id="method-note"></p>
+
+        <div class="row2">
+          <label for="madhab">Mezhep (Asr)</label>
+          <select id="madhab">
+            <option value="shafi">Şafi</option>
+            <option value="hanafi">Hanefi</option>
+          </select>
+        </div>
+
+        <div class="row2">
+          <label for="highLat">Yüksek enlem kuralı</label>
+          <select id="highLat">
+            <option value="auto">Otomatik (önerilen)</option>
+            <option value="middleofthenight">Gecenin yarısı</option>
+            <option value="seventhofthenight">Gecenin 1/7'si</option>
+            <option value="twilightangle">Alacakaranlık açısı</option>
+          </select>
+        </div>
+
+        <h3>Dakika kaydırmaları</h3>
+        <p class="hint">Vakit hesabını değiştirmeden sadece gösterilen saati kaydırır.</p>
+        <div class="grid" id="offsets"></div>
+
+        <div class="row2">
+          <label for="imsak">İmsak, sabah vaktinden kaç dakika önce</label>
+          <input id="imsak" type="number" min="0" max="60" step="1" />
+        </div>
+        <div class="row2">
+          <label>İmsak satırını göster</label>
+          <input id="showImsak" type="checkbox" />
+        </div>
+
+        <h3>Çevrimiçi doğrulama</h3>
+        <div class="row2">
+          <label for="online">Kaynak</label>
+          <select id="online">
+            <option value="off">Kapalı — tamamen çevrimdışı</option>
+            <option value="aladhan">Aladhan API ile doğrula</option>
+          </select>
+        </div>
+        <p class="hint" id="online-note"></p>
+        <button id="verify" class="btn">Şimdi doğrula</button>
+        <pre id="verify-out" class="out" hidden></pre>
+      </section>
+
+      <!-- Görünüm -->
+      <section class="page" data-page="look">
+        <div class="row2">
+          <label>Tema</label>
+          <div class="seg" id="theme"></div>
+        </div>
+        <div class="row2">
+          <label>Saat biçimi</label>
+          <div class="seg" id="clock">
+            <button data-v="analog">Analog</button>
+            <button data-v="digital">Dijital</button>
+          </div>
+        </div>
+        <div class="row2">
+          <label for="opacity">Saydamlık <b id="opacity-v"></b></label>
+          <input id="opacity" type="range" min="0.35" max="1" step="0.05" />
+        </div>
+        <div class="row2">
+          <label for="fontScale">Yazı boyutu <b id="fontScale-v"></b></label>
+          <input id="fontScale" type="range" min="0.8" max="1.4" step="0.05" />
+        </div>
+        <div class="row2">
+          <label for="hour24">24 saat biçimi</label>
+          <input id="hour24" type="checkbox" />
+        </div>
+        <div class="row2">
+          <label for="showSeconds">Saniye göster</label>
+          <input id="showSeconds" type="checkbox" />
+        </div>
+      </section>
+
+      <!-- Sistem -->
+      <section class="page" data-page="system">
+        <div class="row2">
+          <label for="alwaysOnTop">Her zaman üstte</label>
+          <input id="alwaysOnTop" type="checkbox" />
+        </div>
+        <div class="row2">
+          <label for="autostart">Windows açılışında başlat</label>
+          <input id="autostart" type="checkbox" />
+        </div>
+        <h3>Widget konumu</h3>
+        <p class="hint">Widget'ı ekranda sürükleyebilirsiniz. Buradan sıfırlamak için:</p>
+        <button id="reset-pos" class="btn">Widget'ı ekran ortasına al</button>
+        <h3>Veri kaynakları</h3>
+        <ul class="src">
+          <li>Vakit hesaplama: <code>adhan</code> (MIT)</li>
+          <li>İl/ilçe listesi: TürkiyeAPI türevi açık veri seti</li>
+          <li>İlçe koordinatları: GeoNames (CC BY 4.0)</li>
+          <li>Dünya araması: Open-Meteo Geocoding</li>
+          <li>Çevrimiçi doğrulama: Aladhan</li>
+        </ul>
+      </section>
+
+      <footer class="s-foot">
+        <span id="save-state" class="hint"></span>
+        <button id="close" class="btn primary">Kapat</button>
+      </footer>
+    </div>
+    <script type="module" src="/src/settings-ui.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="tr" data-theme="glass">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Namaz Vaktimiz</title>
+  </head>
+  <body>
+    <main id="root">
+      <header id="drag">
+        <div class="head-l">
+          <span id="place">—</span>
+          <span id="date" class="dim">—</span>
+        </div>
+        <div id="clock" class="no-drag"></div>
+      </header>
+
+      <section id="nowbox">
+        <div class="now-lbl">Şu anki vakit</div>
+        <div id="now">—</div>
+        <div id="next" class="dim">—</div>
+      </section>
+
+      <section id="times"></section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
