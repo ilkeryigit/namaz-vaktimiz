@@ -8,6 +8,21 @@ kütüphanesiyle hesaplanır, varsayılan yöntem **Diyanet**'tir.
 
 ---
 
+## Ekran görüntüleri
+
+<div align="center">
+
+| Gece teması · dijital | Cam teması · analog | Nötr tema · dijital |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/01-widget-gece-dijital.png" width="260" alt="Gece teması, dijital saat"> | <img src="docs/screenshots/02-widget-cam-analog.png" width="278" alt="Cam teması, analog saat"> | <img src="docs/screenshots/03-widget-notr-dijital.png" width="260" alt="Nötr tema, dijital saat"> |
+
+</div>
+
+Görüntülerde görülenler: vakit listesi, imsak vakti, kalan süre ve köşedeki
+sabitleme / ayarlar düğmeleri.
+
+---
+
 ## Özellikler
 
 **Widget**
@@ -179,9 +194,10 @@ prompt.docx           Projenin özgün gereksinim dokümanı
   `x86_64-pc-windows-msvc` hedefine sabitlenmiştir.
 - **Bellek ~190 MB.** WebView2'nin gömülü taban maliyeti; uygulama kodunu
   değiştirerek anlamlı biçimde düşürülemez.
-- **Tepsi tıklaması otomatik test edilemiyor.** Windows tepsi tıklamalarını
-  dışarıya iletmediği için "tepsiye sol tıkla → widget geri gelsin" davranışı
-  elle doğrulanmalıdır.
+- **Tepsi tıklaması otomatik testte yok.** Windows tepsi tıklamalarını dışarıya
+  iletmediği için "tepsiye sol tıkla → widget geri gelsin" davranışı Vitest'te
+  yazılamaz. Elle doğrulandı: sol tık widget'ı geri getiriyor, sağ tık menüsündeki
+  *Ayarlar…* ve *Widget'ı gizle* çalışıyor.
 - **`package.json` içinde `"private": true`.** Yanlışlıkla npm'e yayınlanmayı
   önler; GitHub için kullanıcı adı yazılıdır.
 
@@ -198,3 +214,20 @@ Bu depo, aşağıdaki üçüncü taraf işleri kapsamında dağıtılmaktadır:
 - **GeoNames** Türkiye dökümü — Creative Commons Attribution 4.0
 - **adhan**, **Tauri** ve diğer `package.json` bağımlılıkları — kendi
   lisanslarıyla
+
+### Görseller ve ekran görüntüleri
+
+Bu depodaki tüm görseller ve ekran görüntüleri projenin kendi çalışmasıdır:
+
+| Dosya | Kaynak | Lisans |
+|---|---|---|
+| `src-tauri/icons/*` | Projeye özgü widget ikonu | MIT |
+| `docs/screenshots/*.png` | Bu uygulamanın kendi ekran görüntüleri | MIT |
+| Köşe düğmelerindeki pin / ayarlar SVG'leri | Material Design (aşağıda) | Apache-2.0 |
+
+`docs/screenshots/` altındaki görüntüler **yalnızca bu uygulamanın ekran
+görüntüleridir**; hazır görsel, stok fotoğraf veya üçüncü taraf sanat
+içermez. Uygulama arayüzünde görünen Material Design ikonları
+[marella/material-design-icons](https://github.com/marella/material-design-icons)
+projelidir ve **Apache License 2.0** ile lisanslıdır; bu ikonlar görüntülere
+dolaylı olarak yansımış olsa da görüntülerin kendisi MIT ile dağıtılır.
