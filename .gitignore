@@ -9,3 +9,6 @@ Thumbs.db
 
 # geçici / deneysel
 .superpowers/
+
+# Word/Excel kilit dosyaları (~$ adıyla başlayan geçici dosyalar)
+~$*
