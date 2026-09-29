@@ -13,7 +13,10 @@ html, body {
 }
 
 #root {
-  height: 100%;
+  position: relative;
+  width: fit-content;
+  min-width: calc(248px * var(--scale));
+  height: auto;
   display: flex;
   flex-direction: column;
   gap: var(--gap);
@@ -27,8 +30,15 @@ html, body {
   backdrop-filter: blur(var(--blur));
 }
 
-#drag { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+/* Sağ boşluk, köşedeki sabitleme düğmesinin saate binmemesi için. */
+#drag { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding-right: 30px; }
 .head-l { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+/* Köşedeki düğmeler: sabitleme ve ayarlar aynı sınıfı paylaşır, yani
+   ölçü/zemin/kenar yarıçapı tanımı gereği aynıdır. */
+.corner { position: absolute; top: 5px; right: 5px; display: flex; flex-direction: column; gap: 4px; }
+.corner-btn { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 7px; background: var(--line); color: var(--dim); opacity: 0.7; cursor: pointer; }
+.corner-btn:hover { opacity: 1; color: var(--fg); }
+.corner-btn[aria-pressed="true"] { opacity: 1; color: var(--now); background: var(--bgc); }
 #place { font-weight: 600; font-size: 1.05em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dim { color: var(--dim); font-size: 0.85em; }
 

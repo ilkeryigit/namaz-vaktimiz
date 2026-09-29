@@ -7,6 +7,15 @@ export type ThemeName = 'glass' | 'night' | 'neutral'
 export type ClockStyle = 'analog' | 'digital'
 export type OnlineSource = 'off' | 'aladhan'
 
+/** Pencere nasıl görünür: masaüstünde, her şeyin üstünde, ya da yalnız tepsi. */
+export type DisplayMode = 'desktop' | 'top' | 'tray'
+
+export const DISPLAY_MODES: { key: DisplayMode; label: string; note: string }[] = [
+  { key: 'desktop', label: 'Masaüstünde', note: 'Normal pencere gibi — görev çubuğunda bulunur' },
+  { key: 'top', label: 'Her zaman üstte', note: 'Bütün pencerelerin üstünde kalır' },
+  { key: 'tray', label: 'Sadece tepsi', note: 'Yalnız sistem tepsisine tıklanınca görünür' },
+]
+
 export type PrayerKey = 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'
 
 export type Offsets = Record<PrayerKey, number>
@@ -36,7 +45,9 @@ export interface Settings {
   showSeconds: boolean
   hour24: boolean
 
-  alwaysOnTop: boolean
+  displayMode: DisplayMode
+  /** Sabitlenince pencere bulunduğu yerde durur, sürüklenemez. */
+  pinned: boolean
   autostart: boolean
   opacity: number
   fontScale: number

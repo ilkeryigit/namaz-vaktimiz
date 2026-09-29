@@ -1,5 +1,5 @@
 import { DEFAULT_DISTRICT, DEFAULT_PROVINCE, findDistrict, findProvince } from './location'
-import { IMSAK_DEFAULT_MINUTES, type Offsets, type Settings } from './types'
+import { IMSAK_DEFAULT_MINUTES, type DisplayMode, type Offsets, type Settings } from './types'
 
 export function defaultSettings(): Settings {
   return {
@@ -23,7 +23,8 @@ export function defaultSettings(): Settings {
     showSeconds: true,
     hour24: true,
 
-    alwaysOnTop: true,
+    displayMode: 'top',
+    pinned: false,
     autostart: false,
     opacity: 0.95,
     fontScale: 1,
@@ -39,6 +40,19 @@ const oneOf = <T extends string>(v: unknown, allowed: readonly T[], fallback: T)
   (allowed as readonly string[]).includes(v as string) ? (v as T) : fallback
 
 const PRAYER_KEYS = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const
+
+/**
+ * Eski sürümlerde `alwaysOnTop` vardı: false idiyse pencere erişilemez
+ * hâle geliyordu (görev çubuğunda yok, üstte de değil). Bu yüzden yanlış
+ * seçim masaüstüne çevrilir, doğru seçim yeni karşılığına taşınır.
+ */
+function resolveDisplayMode(p: Record<string, unknown>, fallback: DisplayMode): DisplayMode {
+  if (p.displayMode !== undefined) {
+    return oneOf(p.displayMode, ['desktop', 'top', 'tray'] as const, fallback)
+  }
+  if (typeof p.alwaysOnTop === 'boolean') return p.alwaysOnTop ? 'top' : 'desktop'
+  return fallback
+}
 
 /**
  * Bozuk/eksik ayar dosyasını güvenli hale getirir. Kullanıcının elindeki
@@ -81,7 +95,8 @@ export function normalizeSettings(partial: unknown): Settings {
     showSeconds: bool(p.showSeconds, d.showSeconds),
     hour24: bool(p.hour24, d.hour24),
 
-    alwaysOnTop: bool(p.alwaysOnTop, d.alwaysOnTop),
+    displayMode: resolveDisplayMode(p, d.displayMode),
+    pinned: bool(p.pinned, d.pinned),
     autostart: bool(p.autostart, d.autostart),
     opacity: clamp(num(p.opacity, d.opacity), 0.35, 1),
     fontScale: clamp(num(p.fontScale, d.fontScale), 0.8, 1.4),

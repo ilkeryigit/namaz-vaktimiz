@@ -4,7 +4,7 @@ import { computeTimes, localDateKey } from './prayer'
 import { applyRemote, canVerifyOnline, fetchAladhan, maxDiffMinutes } from './remote'
 import { broadcastResetPosition, broadcastSettings, clearPosition, loadSettings, saveSettings } from './store'
 import { applyTheme, THEME_CSS } from './themes'
-import { METHODS, PRAYER_LABELS, THEMES, type PrayerKey, type Settings } from './types'
+import { DISPLAY_MODES, METHODS, PRAYER_LABELS, THEMES, type PrayerKey, type Settings } from './types'
 
 let s: Settings
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
@@ -102,6 +102,21 @@ function fillThemes(): void {
       s.theme = b.dataset.v as Settings['theme']
       syncSeg(box, s.theme)
       applyTheme(document.documentElement, s)
+      void commit()
+    })
+  )
+}
+
+function fillDisplayModes(): void {
+  const box = $('displayMode')
+  box.innerHTML = DISPLAY_MODES.map((m) => `<button data-v="${m.key}">${m.label}</button>`).join('')
+  syncSeg(box, s.displayMode)
+  $('displayMode-note').textContent = DISPLAY_MODES.find((m) => m.key === s.displayMode)?.note ?? ''
+  box.querySelectorAll<HTMLButtonElement>('button').forEach((b) =>
+    b.addEventListener('click', () => {
+      s.displayMode = b.dataset.v as Settings['displayMode']
+      syncSeg(box, s.displayMode)
+      $('displayMode-note').textContent = DISPLAY_MODES.find((m) => m.key === s.displayMode)?.note ?? ''
       void commit()
     })
   )
@@ -239,13 +254,14 @@ function bind(): void {
     $(id).addEventListener(ev, (e) => {
       const t = e.target as HTMLInputElement
       ;(s as unknown as Record<string, unknown>)[id] = t.type === 'checkbox' ? t.checked : t.type === 'range' || t.type === 'number' ? Number(t.value) : t.value
-      if (id === 'opacity' || id === 'fontScale') $(`${id}-v`).textContent = Number(t.value).toFixed(2)
+      if (id === 'opacity') $(`${id}-v`).textContent = Number(t.value).toFixed(2)
+      if (id === 'fontScale') $('fontScale-v').textContent = `${Math.round(Number(t.value) * 100)}%`
       if (id === 'theme' || id === 'opacity' || id === 'fontScale') applyTheme(document.documentElement, s)
       updateOnlineNote()
       void commit()
     })
 
-  for (const id of ['madhab', 'highLat', 'showImsak', 'hour24', 'showSeconds', 'alwaysOnTop', 'online', 'imsak'] as (keyof Settings)[]) {
+  for (const id of ['madhab', 'highLat', 'showImsak', 'hour24', 'showSeconds', 'online', 'imsak'] as (keyof Settings)[]) {
     bindSel(id)
   }
   bindSel('opacity', 'input')
@@ -305,6 +321,7 @@ async function main(): Promise<void> {
   fillMethods()
   fillOffsets()
   fillThemes()
+  fillDisplayModes()
   syncCountry()
 
   $<HTMLSelectElement>('madhab').value = s.madhab
@@ -314,12 +331,11 @@ async function main(): Promise<void> {
   $<HTMLInputElement>('showImsak').checked = s.showImsak
   $<HTMLInputElement>('hour24').checked = s.hour24
   $<HTMLInputElement>('showSeconds').checked = s.showSeconds
-  $<HTMLInputElement>('alwaysOnTop').checked = s.alwaysOnTop
   $<HTMLInputElement>('autostart').checked = s.autostart
   $<HTMLInputElement>('opacity').value = String(s.opacity)
   $<HTMLInputElement>('fontScale').value = String(s.fontScale)
   $('opacity-v').textContent = s.opacity.toFixed(2)
-  $('fontScale-v').textContent = s.fontScale.toFixed(2)
+  $('fontScale-v').textContent = `${Math.round(s.fontScale * 100)}%`
   syncSeg($('clock'), s.clock)
   $('world-picked').textContent = s.worldName ? `${s.worldName} · ${s.worldLat.toFixed(3)}, ${s.worldLon.toFixed(3)}` : '—'
   applyTheme(document.documentElement, s)

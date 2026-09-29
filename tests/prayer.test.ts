@@ -154,4 +154,20 @@ describe('ayarların normalleştirilmesi', () => {
     expect(normalizeSettings({ offsets: { fajr: 999 } }).offsets.fajr).toBe(30)
     expect(normalizeSettings({ offsets: { fajr: -999 } }).offsets.fajr).toBe(-30)
   })
+
+  it('eski alwaysOnTop ayarını görünüm moduna taşır', () => {
+    expect(normalizeSettings({ alwaysOnTop: true }).displayMode).toBe('top')
+    // false idi: pencere erişilemez hâle geldiği için masaüstüne çevrilir.
+    expect(normalizeSettings({ alwaysOnTop: false }).displayMode).toBe('desktop')
+    expect(normalizeSettings({}).displayMode).toBe(defaultSettings().displayMode)
+    expect(normalizeSettings({ displayMode: 'uydurma' }).displayMode).toBe(defaultSettings().displayMode)
+    // Yeni alan varsa eski alan ezmemeye çalışmamalı.
+    expect(normalizeSettings({ alwaysOnTop: true, displayMode: 'tray' }).displayMode).toBe('tray')
+  })
+
+  it('sabitleme ve yazı ölçeğini korur', () => {
+    expect(normalizeSettings({ pinned: true }).pinned).toBe(true)
+    expect(normalizeSettings({ pinned: 'evet' }).pinned).toBe(false)
+    expect(normalizeSettings({ fontScale: 0.1 }).fontScale).toBe(0.8)
+  })
 })
