@@ -1,6 +1,6 @@
 ﻿use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
 use tauri::tray::TrayIconBuilder;
-use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
+use tauri::{AppHandle, Manager};
 
 const MAIN_WINDOW: &str = "main";
 const SETTINGS_WINDOW: &str = "settings";
@@ -10,15 +10,7 @@ fn show_settings(app: &AppHandle) {
         let _ = w.show();
         let _ = w.unminimize();
         let _ = w.set_focus();
-        return;
     }
-    let url = WebviewUrl::App("settings.html".into());
-    let _ = WebviewWindowBuilder::new(app, SETTINGS_WINDOW, url)
-        .title("Namaz Vaktimiz — Ayarlar")
-        .inner_size(760.0, 660.0)
-        .min_inner_size(620.0, 560.0)
-        .resizable(true)
-        .build();
 }
 
 // Widget'ın tek geri dönüş yolu: pencere hiçbir koşulda geri getirilemezse

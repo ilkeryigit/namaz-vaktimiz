@@ -16,10 +16,14 @@ kütüphanesiyle hesaplanır, varsayılan yöntem **Diyanet**'tir.
 |:---:|:---:|:---:|
 | <img src="docs/screenshots/01-widget-gece-dijital.png" width="260" alt="Gece teması, dijital saat"> | <img src="docs/screenshots/02-widget-cam-analog.png" width="278" alt="Cam teması, analog saat"> | <img src="docs/screenshots/03-widget-notr-dijital.png" width="260" alt="Nötr tema, dijital saat"> |
 
+| Ayarlar penceresi |
+|:---:|
+| <img src="docs/screenshots/04-ayarlar.png" width="420" alt="Ayarlar penceresi, gece teması"> |
+
 </div>
 
-Görüntülerde görülenler: vakit listesi, imsak vakti, kalan süre ve köşedeki
-sabitleme / ayarlar düğmeleri.
+Görüntülerde görülenler: vakit listesi, imsak vakti, kalan süre, köşedeki
+sabitleme / ayarlar düğmeleri ve ayarlar penceresi.
 
 ---
 
@@ -80,9 +84,10 @@ sabitleme / ayarlar düğmeleri.
 
 ## Kurulum
 
-Hazır kurulum dosyasını çalıştırıp gelen sihirbazı tamamlayın. Kurulum
-`%LOCALAPPDATA%\Namaz Vaktimiz` altına yazar; Başlat menüsüne ve Masaüstüne
-kısayol ekler.
+**[Tıklayıp indiriniz ve kurunuz →](https://github.com/ilkeryigit/namaz-vaktimiz/raw/master/release/NamazVaktimiz-Setup-1.0.0-x64.exe)**
+
+Kurulum sihirbazını tamamlayın, program kendini kurar. Başlat menüsüne ve
+Masaüstüne kısayol eklenir.
 
 ## Kaynaktan derleme
 
@@ -223,6 +228,7 @@ Bu depodaki tüm görseller ve ekran görüntüleri projenin kendi çalışması
 |---|---|---|
 | `src-tauri/icons/*` | Projeye özgü widget ikonu | MIT |
 | `docs/screenshots/*.png` | Bu uygulamanın kendi ekran görüntüleri | MIT |
+| `release/NamazVaktimiz-Setup-1.0.0-x64.exe` | Bu depodaki derlenmiş kurulum dosyası | MIT |
 | Köşe düğmelerindeki pin / ayarlar SVG'leri | Material Design (aşağıda) | Apache-2.0 |
 
 `docs/screenshots/` altındaki görüntüler **yalnızca bu uygulamanın ekran

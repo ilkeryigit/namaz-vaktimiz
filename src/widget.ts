@@ -188,8 +188,9 @@ async function applyPlatform(s: Settings): Promise<void> {
       saveTimer = window.setTimeout(() => void savePosition({ x: payload.x, y: payload.y }), 400)
     })
 
-    document.getElementById('drag')?.addEventListener('mousedown', (e) => {
-      if ((e.target as HTMLElement).closest('button, a, .no-drag')) return
+    // Pencerenin tamamı sürüklenebilir; yalnız düğmeler tıklanabilir kalsın.
+    document.body.addEventListener('mousedown', (e) => {
+      if ((e.target as HTMLElement).closest('button, a')) return
       if (settings?.pinned) return
       void w.startDragging()
     })
