@@ -1,6 +1,6 @@
 [package]
 name = "namaz-vaktimiz"
-version = "1.0.0"
+version = "1.1.0"
 description = "Masaüstü namaz vakti ve saat widget'ı"
 authors = ["Namaz Vaktimiz"]
 edition = "2021"
