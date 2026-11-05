@@ -54,6 +54,7 @@ sabitleme / ayarlar düğmeleri ve ayarlar penceresi.
 **Davranış**
 
 - Windows açılışında otomatik başlatma
+- Görev çubuğunda ikon görünmez; widget yalnız tepsi menüsünden yönetilir
 - Tek örnek: ikinci kopyayı açmak widget çoğaltmaz, mevcut öne gelir
 - Ayarlar penceresi değişiklikleri widget'a canlı yansıtır
 - Kapatma düğmesi pencereyi gizler; çıkış yalnız tepsi menüsünden
@@ -84,7 +85,7 @@ sabitleme / ayarlar düğmeleri ve ayarlar penceresi.
 
 ## Kurulum
 
-**[Tıklayıp indiriniz ve kurunuz →](https://github.com/ilkeryigit/namaz-vaktimiz/raw/master/release/NamazVaktimiz-Setup-1.1.0-x64.exe)**
+**[Tıklayıp indiriniz ve kurunuz →](https://github.com/ilkeryigit/namaz-vaktimiz/raw/master/release/NamazVaktimiz-Setup-1.2.0-x64.exe)**
 
 Kurulum sihirbazını tamamlayın, program kendini kurar. Başlat menüsüne ve
 Masaüstüne kısayol eklenir.
@@ -100,7 +101,7 @@ npm run tauri build
 Üretilen kurulum dosyası:
 
 ```
-src-tauri/target/release/bundle/nsis/Namaz Vaktimiz_1.1.0_x64-setup.exe
+src-tauri/target/release/bundle/nsis/Namaz Vaktimiz_1.2.0_x64-setup.exe
 ```
 
 `npm run build` yalnız ön yüzü derler (`dist/`), `npm run tauri build` tam
@@ -228,7 +229,7 @@ Bu depodaki tüm görseller ve ekran görüntüleri projenin kendi çalışması
 |---|---|---|
 | `src-tauri/icons/*` | Projeye özgü widget ikonu | MIT |
 | `docs/screenshots/*.png` | Bu uygulamanın kendi ekran görüntüleri | MIT |
-| `release/NamazVaktimiz-Setup-1.1.0-x64.exe` | Bu depodaki derlenmiş kurulum dosyası | MIT |
+| `release/NamazVaktimiz-Setup-1.2.0-x64.exe` | Bu depodaki derlenmiş kurulum dosyası | MIT |
 | Köşe düğmelerindeki pin / ayarlar SVG'leri | Material Design (aşağıda) | Apache-2.0 |
 
 `docs/screenshots/` altındaki görüntüler **yalnızca bu uygulamanın ekran

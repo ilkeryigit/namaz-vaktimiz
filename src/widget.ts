@@ -115,16 +115,14 @@ async function keepOnScreen(nw: number, nh: number): Promise<void> {
 }
 
 /**
- * Görünüm modunu uygular. 'desktop' modunda görev çubuğunda görünür olur
- * (eskiden pencere erişilemez biçimde kaybolabiliyordu).
+ * Görünüm modunu uygular. Widget hiçbir modda görev çubuğunda görünmez;
+ * yönetim yalnız tepsi menüsünden yapılır.
  */
 async function applyDisplayMode(w: import('@tauri-apps/api/window').Window, s: Settings): Promise<void> {
   const top = s.displayMode === 'top'
   await w.setAlwaysOnTop(top)
-  // Görev çubuğu düğmesi kritik: başlıksız/çerçevesiz pencere tek başına
-  // erişilemez oluyordu (asıl şikâyet). 'desktop' modunda düğmenin varlığını
-  // açıkça garantile; diğer modlarda platform ne verirse onu bozma.
-  if (s.displayMode === 'desktop') await w.setSkipTaskbar(false)
+  // Görev çubuğu düğmesi her modda kapalı: widget yalnız tepside.
+  await w.setSkipTaskbar(true)
   if (s.displayMode === 'tray') await w.hide()
   else await w.show()
 }

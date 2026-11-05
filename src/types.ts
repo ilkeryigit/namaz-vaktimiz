@@ -11,7 +11,7 @@ export type OnlineSource = 'off' | 'aladhan'
 export type DisplayMode = 'desktop' | 'top' | 'tray'
 
 export const DISPLAY_MODES: { key: DisplayMode; label: string; note: string }[] = [
-  { key: 'desktop', label: 'Masaüstünde', note: 'Normal pencere gibi — görev çubuğunda bulunur' },
+  { key: 'desktop', label: 'Masaüstünde', note: 'Masaüstünde durur; görev çubuğunda görünmez' },
   { key: 'top', label: 'Her zaman üstte', note: 'Bütün pencerelerin üstünde kalır' },
   { key: 'tray', label: 'Sadece tepsi', note: 'Yalnız sistem tepsisine tıklanınca görünür' },
 ]
