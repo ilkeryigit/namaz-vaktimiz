@@ -36,6 +36,15 @@ fn open_settings(app: AppHandle) {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // Chromium/WebView2, pencereyi "örtük" sayınca çizimi durduruyor. Saydam
+    // pencere olduğu için widget masaüstü gösterildiğinde tamamen görünmez
+    // kalıyordu; bu anahtarlar örtük pencere duraklatmasını kapatır.
+    #[cfg(windows)]
+    std::env::set_var(
+        "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+        "--disable-features=CalculateNativeWinOcclusion --disable-backgrounding-occluded-windows",
+    );
+
     tauri::Builder::default()
         // İlk sırada olmalı: ikinci örnek başka bir örnek doğmadan yakalanır.
         // Widget'ın kopyası veya çift tray ikonu oluşmasın, mevcut öne gelsin.
